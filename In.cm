@@ -1,11 +1,12 @@
 Library
     structure In
 is
-    datatype.sml 
-    In.lex 
-    In.yacc:MLYacc
-    glue.sml
-    compiler.sml
     $/basis.cm 
     $/ml-yacc-lib.cm
     $smlnj/compiler/compiler.cm
+    rational.sml
+    datatype.sml 
+    In.lex 
+    In.grm
+    glue.sml
+    compiler.sml
