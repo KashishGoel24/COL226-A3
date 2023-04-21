@@ -1,6 +1,6 @@
 open DataTypes
-open Rational
 open Dictionary
+open Rational
 
 val SymbolTable = ref (create())
 
@@ -14,8 +14,8 @@ fun prependAll (l::L) L' = l::(prependAll L L')
 
 fun set id expr =
     case lookup (!SymbolTable) id of 
-        (INT s) => SETINT (id, expr)
-      | (BOOL b) => SETBOOL (id, expr)
+        (INTEGER s) => SETINT (id, expr)
+      | (BOOLEAN b) => SETBOOL (id, expr)
 
 %%
 
@@ -28,9 +28,9 @@ fun set id expr =
       TOK_WRITE | TOK_IF | TOK_THEN | TOK_ELSE | TOK_FI | TOK_WHILE | TOK_DO | 
       TOK_OD | TOK_TT | TOK_FF | TOK_SEMICOLON | TOK_PROCEDURE |
       TOK_COMMA | TOK_LBRACE | TOK_RBRACE | TOK_LPAREN | TOK_RPAREN | 
-      TOK_ID of string | TOK_NUM of int | TOK_EOF | TOK_RAT of rational
+      TOK_ID of string | TOK_NUM of int | TOK_EOF 
 
-%nonterm block of PROG | prog of PROG | declist of DEC list | vardeclist of VARDEC list | identlist of string list | procdeflist of PROCDEF list | procdef of PROCDEF |
+%nonterm block of PROG | prog of PROG | declist of DEC list | vardeclist of DEC list | identlist of string list | procdeflist of DEC list | procdef of PROCDEF |
          ratvardec of VARDEC list | intvardec of VARDEC list | boolvardec of VARDEC list | cmdlist of CMD list | cmd of CMD | 
          cmdseq of CMD list | expr of EXPR
 
@@ -54,7 +54,7 @@ fun set id expr =
 
 %%
 
-block: prog           (PROG ([],[]))
+block: prog           (prog)
 
 prog : declist cmdseq (PROG (declist, cmdseq))
 
@@ -62,24 +62,24 @@ declist: vardeclist                       (vardeclist)
        | procdeflist                      (procdeflist)
        | vardeclist procdeflist           (vardeclist @ procdeflist)
 
-vardeclist : ratvardec intvardec boolvardec             (ratvardec @ intvardec @ boolvardec)
-              | ratvardec intvardec                     (ratvardec @ intvardec)
-              | ratvardec boolvardec                    (ratvardec @ boolvardec)
-              | intvardec boolvardec                    (intvardec @ boolvardec)
-              | ratvardec                               (ratvardec)
-              | intvardec                               (intvardec)
-              | boolvardec                              (boolvardec)
+vardeclist : ratvardec intvardec boolvardec             (makeVarList(ratvardec)(VARI) @ makeVarList(intvardec)(VARI) @ makeVarList(boolvardec)(VARI))
+              | ratvardec intvardec                     (makeVarList(ratvardec)(VARI) @ makeVarList(intvardec)(VARI))
+              | ratvardec boolvardec                    (makeVarList(ratvardec)(VARI) @ makeVarList(boolvardec)(VARI))
+              | intvardec boolvardec                    (makeVarList(intvardec)(VARI) @ makeVarList(boolvardec)(VARI))
+              | ratvardec                               (makeVarList(ratvardec)(VARI))
+              | intvardec                               (makeVarList(intvardec)(VARI))
+              | boolvardec                              (makeVarList(boolvardec)(VARI))
 
-ratvardec : TOK_RATIONAL identlist TOK_SEMICOLON        (makeVarList varlist RATIONAL)
+ratvardec : TOK_RATIONAL identlist TOK_SEMICOLON        (makeVarList identlist RATIONAL)
 
-intvardec : TOK_INTEGER identlist TOK_SEMICOLON         (makeVarList varlist INTEGER)
+intvardec : TOK_INTEGER identlist TOK_SEMICOLON         (makeVarList identlist INTEGER)
 
-boolvardec : TOK_BOOLEAN identlist TOK_SEMICOLON        (makeVarList varlist BOOLEAN)
+boolvardec : TOK_BOOLEAN identlist TOK_SEMICOLON        (makeVarList identlist BOOLEAN)
 
 identlist : TOK_ID TOK_COMMA identlist                  (TOK_ID::identlist)
             | TOK_ID                                    ([TOK_ID])
 
-procdeflist : procdef TOK_SEMICOLON procdeflist        (procdef::procdeflist)
+procdeflist : procdef TOK_SEMICOLON procdeflist        (PROC(procdef)::procdeflist)
 
 procdef : TOK_PROCEDURE TOK_ID prog                     (PROCEDURE(TOK_ID,prog))
 
@@ -88,7 +88,7 @@ cmdseq: TOK_LBRACE cmdlist TOK_RBRACE                   (cmdlist)
 cmdlist: cmd TOK_SEMICOLON cmdlist                      (cmd::cmdlist)
        |                                                ([])
 
-cmd: TOK_READ TOK_ID                                    (RD TOK_ID)
+cmd: TOK_READ TOK_LPAREN TOK_ID TOK_RPAREN              (RD TOK_ID)
    | TOK_CALL TOK_ID                                    (CL TOK_ID)
    | TOK_PRINT expr                                     (PR expr)
    | TOK_ID TOK_ASSIGN expr                             (set TOK_ID expr)
@@ -105,9 +105,8 @@ expr: expr TOK_ADD expr %prec TOK_ADD (ADD (expr1,expr2))
     | expr TOK_RDIV expr %prec TOK_RDIV (RDIV (expr1,expr2))
     | TOK_INV expr                        (INV (expr))
     | expr TOK_MOD expr %prec TOK_MOD (MOD (expr1,expr2))
-    | TOK_ID (case lookup (!SymbolTable) TOK_ID of (INT s) => (IREF TOK_ID) | (BOOL b) => (BREF TOK_ID))
+    | TOK_ID (case lookup (!SymbolTable) TOK_ID of (INTEGER s) => (IREF TOK_ID) | (BOOLEAN b) => (BREF TOK_ID))
     | TOK_NUM (NUM TOK_NUM)
-    | TOK_RAT (RAT TOK_RAT)
     | TOK_UMINUS TOK_NUM (NUM (~1*TOK_NUM))
     | TOK_ADD TOK_NUM (NUM TOK_NUM)
     | expr TOK_OR expr %prec TOK_OR (OR (expr1, expr2))
