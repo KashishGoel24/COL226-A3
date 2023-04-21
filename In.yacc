@@ -22,15 +22,16 @@ fun set id expr =
 %name In 
 
 %term TOK_ADD | TOK_UMINUS | TOK_SUB | TOK_MUL | TOK_DIV | TOK_MOD | TOK_EQ | 
+      TOK_RADD | TOK_RSUB | TOK_RMUL | TOK_RDIV |
       TOK_NE | TOK_GT | TOK_GE | TOK_LT | TOK_LE | TOK_AND | TOK_OR | TOK_NOT | 
-      TOK_ASSIGN | TOK_INVERSE | TOK_VAR | TOK_INTEGER | TOK_BOOLEAN | TOK_RATIONAL | TOK_READ | TOK_CALL | TOK_PRINT 
+      TOK_ASSIGN | TOK_INV | TOK_VAR | TOK_INTEGER | TOK_BOOLEAN | TOK_RATIONAL | TOK_READ | TOK_CALL | TOK_PRINT |
       TOK_WRITE | TOK_IF | TOK_THEN | TOK_ELSE | TOK_FI | TOK_WHILE | TOK_DO | 
-      TOK_OD | TOK_TT | TOK_FF | TOK_SEMICOLON | TOK_PROCEDURE
+      TOK_OD | TOK_TT | TOK_FF | TOK_SEMICOLON | TOK_PROCEDURE |
       TOK_COMMA | TOK_LBRACE | TOK_RBRACE | TOK_LPAREN | TOK_RPAREN | 
       TOK_ID of string | TOK_NUM of int | TOK_EOF | TOK_RAT of rational
 
-%nonterm prog of PROG | declist of DEC list | dec of DEC list | 
-         varlist of string list | cmdlist of CMD list | cmd of CMD | 
+%nonterm block of PROG | prog of PROG | declist of DEC list | vardeclist of VARDEC list | identlist of string list | procdeflist of PROCDEF list | procdef of PROCDEF |
+         ratvardec of VARDEC list | intvardec of VARDEC list | boolvardec of VARDEC list | cmdlist of CMD list | cmd of CMD | 
          cmdseq of CMD list | expr of EXPR
 
 %left TOK_OR
@@ -53,7 +54,9 @@ fun set id expr =
 
 %%
 
-prog: declist cmdseq (PROG (declist, cmdseq))
+block: prog           (PROG ([],[]))
+
+prog : declist cmdseq (PROG (declist, cmdseq))
 
 declist: vardeclist                       (vardeclist)
        | procdeflist                      (procdeflist)
@@ -66,7 +69,6 @@ vardeclist : ratvardec intvardec boolvardec             (ratvardec @ intvardec @
               | ratvardec                               (ratvardec)
               | intvardec                               (intvardec)
               | boolvardec                              (boolvardec)
-              |
 
 ratvardec : TOK_RATIONAL identlist TOK_SEMICOLON        (makeVarList varlist RATIONAL)
 
@@ -77,15 +79,14 @@ boolvardec : TOK_BOOLEAN identlist TOK_SEMICOLON        (makeVarList varlist BOO
 identlist : TOK_ID TOK_COMMA identlist                  (TOK_ID::identlist)
             | TOK_ID                                    ([TOK_ID])
 
-procdeflist : procdef TOK_SEMICOLON procdeflist |       (procdef::procdeflist)
-              |                                         ([])
+procdeflist : procdef TOK_SEMICOLON procdeflist        (procdef::procdeflist)
 
 procdef : TOK_PROCEDURE TOK_ID prog                     (PROCEDURE(TOK_ID,prog))
 
 cmdseq: TOK_LBRACE cmdlist TOK_RBRACE                   (cmdlist)
 
 cmdlist: cmd TOK_SEMICOLON cmdlist                      (cmd::cmdlist)
-       |                       ([])
+       |                                                ([])
 
 cmd: TOK_READ TOK_ID                                    (RD TOK_ID)
    | TOK_CALL TOK_ID                                    (CL TOK_ID)
