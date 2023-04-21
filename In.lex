@@ -49,8 +49,7 @@ eol = ("\013\010"|"\010"|"\013");
 "od" => (col:=yypos-(!eolpos); T.TOK_OD(!lin,!col));
 "read" => (col:=yypos-(!eolpos); T.TOK_READ(!lin,!col));
 "call" => (col:=yypos-(!eolpos); T.TOK_CALL(!lin,!col));
-"read" => (col:=yypos-(!eolpos); T.TOK_PRINT(!lin,!col));
-"print" => (col:=yypos-(!eolpos); T.TOK_WRITE(!lin,!col));
+"print" => (col:=yypos-(!eolpos); T.TOK_PRINT(!lin,!col));
 "procedure" => (col:=yypos-(!eolpos); T.TOK_PROCEDURE(!lin,!col));
 "var" => (col:=yypos-(!eolpos); T.TOK_VAR(!lin,!col));
 "integer" => (col:=yypos-(!eolpos); T.TOK_INTEGER(!lin,!col));
@@ -89,20 +88,8 @@ eol = ("\013\010"|"\010"|"\013");
 ":=" => (col:=yypos-(!eolpos); T.TOK_ASSIGN(!lin,!col));
 "inverse" => (col:=yypos-(!eolpos); T.TOK_INV(!lin,!col));
 
-{digit}+ => (col:=yypos-(!eolpos);
-        T.TOK_NUM(foldl (fn(a,r)=>ord(a)-ord(#"0")+10*r) 0 (explode yytext), !lin, !col));
-
-{digit}+ "/" {digit}+ => (col:=yypos-(!eolpos);
-                          let val_str = yytext
-                          let parts = List.map (fn(x) => foldl (fn(a,r)=>ord(a)-ord(#"0")+10*r) 0 (explode x)) (String.tokens (fn c => c = #"/") val_str)
-                          let numerator = [List.nth(parts, 0)]
-                          let denominator = [List.nth(parts, 1)]
-                          let val_rational = (numerator, denominator)
-                          T.TOK_RAT(val_rational, !lin, !col);
-                          )
+{digit}+ => (col:=yypos-(!eolpos);T.TOK_NUM(foldl (fn(a,r)=>ord(a)-ord(#"0")+10*r) 0 (explode yytext), !lin, !col));
 
 [A-Za-z][A-Za-z0-9]* => (col:=yypos-(!eolpos);T.TOK_ID(yytext,!lin,!col));
 
 . => (print ("Unknown token found at " ^ (Int.toString (!lin)) ^ ": <" ^ yytext ^ ">. Continuing.\n"); continue());
-
-%%
