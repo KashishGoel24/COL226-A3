@@ -1,0 +1,14 @@
+rational y;
+integer powerArg1, powerResult;
+boolean powerArg2, factorialArg,
+        factorialResult;
+procedure x
+
+    integer z;
+    {
+        print z;
+    }
+;
+{
+    call z;
+}

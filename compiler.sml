@@ -1,5 +1,5 @@
 structure In : 
-sig val interpret : string -> Datatypes.In
+sig val interpret : string -> DataTypes.PROG
 end = 
 struct
 exception InError;
@@ -11,7 +11,7 @@ fun interpret (fileName) =
                 else TextIO.inputN (inStream,n);
         val printError : string * int * int -> unit = fn 
             (msg,line,col) =>
-                print (fileName^"["Int.toString line^":"^Int.toString col^"] "^msg^"\n");
+                print (fileName^"["^Int.toString line^":"^Int.toString col^"] "^msg^"\n");
         val (tree,rem) = InParser.parse 
                     (15,
                     (InParser.makeLexer grab fileName),

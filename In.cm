@@ -6,6 +6,7 @@ is
     $smlnj/compiler/compiler.cm
     rational.sml
     datatype.sml 
+    dict.sml
     In.lex 
     In.grm
     glue.sml

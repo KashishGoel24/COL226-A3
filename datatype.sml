@@ -1,9 +1,7 @@
 (* open Rational *)
-signature DATATYPES =
+signature DataTypes =
 sig datatype PROG  = PROG of (DEC list)*(CMD list)
-    and      DEC   = VARI of VARDEC| PROC of PROCDEF
-    and      VARDEC   = INTEGER of string | BOOLEAN of string | RATIONAL of string
-    and      PROCDEF  = PROCEDURE of string*PROG
+    and      DEC   = INTEGER of string| BOOLEAN of string | RATIONAL of string | PROC of string*PROG
     and      CMD   = RD of string | PR of EXPR | CL of string | WH of EXPR*(CMD list) | 
                      ITE of EXPR*(CMD list)*(CMD list) | SETINT of string*EXPR |
                      SETBOOL of string*EXPR | SETRAT of string*EXPR 
@@ -24,9 +22,7 @@ end;
 structure DataTypes =
 struct 
     datatype PROG  = PROG of (DEC list)*(CMD list)
-    and      DEC   = VARI of VARDEC| PROC of PROCDEF
-    and      VARDEC   = INTEGER of string | BOOLEAN of string | RATIONAL of string
-    and      PROCDEF  = PROCEDURE of string*PROG
+    and      DEC   = INTEGER of string| BOOLEAN of string | RATIONAL of string | PROC of string*PROG
     and      CMD   = RD of string | PR of EXPR | CL of string | WH of EXPR*(CMD list) | 
                      ITE of EXPR*(CMD list)*(CMD list) | SETINT of string*EXPR |
                      SETBOOL of string*EXPR | SETRAT of string*EXPR 
