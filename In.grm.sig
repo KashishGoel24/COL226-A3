@@ -21,6 +21,7 @@ val TOK_FI:  'a * 'a -> (svalue,'a) token
 val TOK_ELSE:  'a * 'a -> (svalue,'a) token
 val TOK_THEN:  'a * 'a -> (svalue,'a) token
 val TOK_IF:  'a * 'a -> (svalue,'a) token
+val TOK_WRITE:  'a * 'a -> (svalue,'a) token
 val TOK_PRINT:  'a * 'a -> (svalue,'a) token
 val TOK_CALL:  'a * 'a -> (svalue,'a) token
 val TOK_READ:  'a * 'a -> (svalue,'a) token
