@@ -15,20 +15,9 @@ val eolpos = ref 0;
 val eof = fn filename => (lin := 1; col := 0; T.TOK_EOF (!lin, !col));
 
 fun inc a = a := !a + 1
-    fun comment() =
-        let
-            fun skip() =
-                case (input()) of
-                    "*)" => ()
-                  |
-                    "(*" => (skip(); skip())
-                  | _ => skip()
-        in
-            skip()
-        end
 
 %%
-%header (functor WhileLexFun(structure Tokens: While_TOKENS));
+%header (functor InLexFun(structure Tokens: In_TOKENS));
 %arg (fileName: string);
 identifier = [A-Za-z][A-Za-z0-9]*;
 alpha=[A-Za-z];
@@ -37,7 +26,7 @@ ws = [\ \t];
 eol = ("\013\010"|"\010"|"\013");
 
 %%
-"(*" => (comment(); lex());
+
 {ws}* => (continue ());
 {eol} => (inc lin; eolpos:=yypos+size yytext; continue ());
 
@@ -89,6 +78,7 @@ eol = ("\013\010"|"\010"|"\013");
 "inverse" => (col:=yypos-(!eolpos); T.TOK_INV(!lin,!col));
 
 {digit}+ => (col:=yypos-(!eolpos);T.TOK_NUM(foldl (fn(a,r)=>ord(a)-ord(#"0")+10*r) 0 (explode yytext), !lin, !col));
+[~]?{digit}* "." {digit}* "(" {digit}+ ")" => (Tokens.NUM (Rational.fromDecimal yytext, !pos, !pos));
 
 [A-Za-z][A-Za-z0-9]* => (col:=yypos-(!eolpos);T.TOK_ID(yytext,!lin,!col));
 
