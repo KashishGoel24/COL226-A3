@@ -1,0 +1,14 @@
+syntax - it is basically about the grammatical correctness of the sentence 
+semantics - it is about the meaning of the sentence i.e. whether it has a valid meaning or not
+lexical analyzer - produces toxens
+i would be having the toxens which would be produced by the lexical analyzer
+then we would be having the symbol table wherein the information for each variable would be fetch and the ir code would be thus generated
+
+workflow :
+character stream--lexical analyzer-->token stream--syntax analyzer-->
+syntax tree--semantic analyzer-->ast--ir code--> ir code 
+
+
+now for the interpreter i need to have 
+1. grammar - combines the ebnf and the rational expression grammar
+2.  

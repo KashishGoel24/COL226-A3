@@ -1,0 +1,36 @@
+fun nice(a : int) =1 
+
+%%
+
+%eop EOF SEMICOLON
+
+
+%pos int
+
+%left MINUS ADD
+%left MULTIPLY DIVIDE
+
+%term NUM of Rational.rational | ADD | MULTIPLY | PRINT |
+      SEMICOLON | EOF | DIVIDE | MINUS | LEFT_BRACKET | RIGHT_BRACKET
+%nonterm EXP of Rational.rational | START of Rational.rational option
+
+%name Calc
+
+%prefer ADD MULTIPLY DIVIDE MINUS
+%keyword PRINT SEMICOLON
+
+%noshift EOF
+%verbose
+%%
+
+  START : PRINT EXP (print (Rational.showRat EXP);
+                     print "\n";
+                     SOME EXP)
+        | EXP (SOME EXP)
+        | (NONE)
+  EXP : NUM             (NUM)
+      | EXP ADD EXP    (Rational.add(EXP1,EXP2))
+      | EXP MULTIPLY EXP   (Rational.multiply(EXP1,EXP2))
+      | EXP DIVIDE EXP     (valOf(Rational.divide(EXP1,EXP2)))
+      | EXP MINUS EXP     (Rational.subtract(EXP1,EXP2))
+      | LEFT_BRACKET EXP RIGHT_BRACKET ((EXP1))

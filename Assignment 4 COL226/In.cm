@@ -1,0 +1,13 @@
+Library
+    structure In
+is
+    $/basis.cm 
+    $/ml-yacc-lib.cm
+    $smlnj/compiler/compiler.cm
+    rational.sml
+    datatype.sml 
+    dict.sml
+    In.lex 
+    In.grm
+    glue.sml
+    compiler.sml

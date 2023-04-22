@@ -1,0 +1,24 @@
+.lex file --> used to define the interface for the lexical analyzer or the scanner
+.grm / .yacc --> defines the parsing function by specifying the ml-yacc rules
+
+
+
+ml lex specifications :-
+user declarations :- we declare the values and functions associated with the program
+		     important to define atleast two values -> lexresult and eof
+		     lexresult -> defines the type of payload for every rule action
+		     eof -> called when the lexer reaches the end of input stream
+
+user definitions  :- we define things like identifiers, start states etc...
+		     we basically kind of define a set of start states
+		     a particular start state directs the lexer to enter a particular set of rules and not the other ones
+
+rules :- each rule has two parts the regex and the action
+	 regex defines the word class that a rule matches
+	 action is a program fragment to be executed when a rule matches the input
+	 all actions must return values of the same type
+
+
+
+The value yypos contains the position of the first character of yytext, relative to the beginning of
+the file.

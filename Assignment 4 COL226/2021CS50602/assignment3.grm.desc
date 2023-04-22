@@ -1,0 +1,226 @@
+
+state 0:
+
+	START : . PRINT EXP 
+	START : . EXP 
+	START : .  (reduce by rule 2)
+
+	NUM	shift 4
+	PRINT	shift 3
+	LEFT_BRACKET	shift 2
+
+	EXP	goto 1
+	START	goto 16
+
+	.	reduce by rule 2
+
+
+state 1:
+
+	EXP : EXP . ADD EXP 
+	EXP : EXP . MULTIPLY EXP 
+	EXP : EXP . DIVIDE EXP 
+	EXP : EXP . MINUS EXP 
+	START : EXP .  (reduce by rule 1)
+
+	ADD	shift 8
+	MULTIPLY	shift 7
+	DIVIDE	shift 6
+	MINUS	shift 5
+
+
+	.	reduce by rule 1
+
+
+state 2:
+
+	EXP : LEFT_BRACKET . EXP RIGHT_BRACKET 
+
+	NUM	shift 4
+	LEFT_BRACKET	shift 2
+
+	EXP	goto 9
+
+	.	error
+
+
+state 3:
+
+	START : PRINT . EXP 
+
+	NUM	shift 4
+	LEFT_BRACKET	shift 2
+
+	EXP	goto 10
+
+	.	error
+
+
+state 4:
+
+	EXP : NUM .  (reduce by rule 3)
+
+
+
+	.	reduce by rule 3
+
+
+state 5:
+
+	EXP : EXP MINUS . EXP 
+
+	NUM	shift 4
+	LEFT_BRACKET	shift 2
+
+	EXP	goto 11
+
+	.	error
+
+
+state 6:
+
+	EXP : EXP DIVIDE . EXP 
+
+	NUM	shift 4
+	LEFT_BRACKET	shift 2
+
+	EXP	goto 12
+
+	.	error
+
+
+state 7:
+
+	EXP : EXP MULTIPLY . EXP 
+
+	NUM	shift 4
+	LEFT_BRACKET	shift 2
+
+	EXP	goto 13
+
+	.	error
+
+
+state 8:
+
+	EXP : EXP ADD . EXP 
+
+	NUM	shift 4
+	LEFT_BRACKET	shift 2
+
+	EXP	goto 14
+
+	.	error
+
+
+state 9:
+
+	EXP : EXP . ADD EXP 
+	EXP : EXP . MULTIPLY EXP 
+	EXP : EXP . DIVIDE EXP 
+	EXP : EXP . MINUS EXP 
+	EXP : LEFT_BRACKET EXP . RIGHT_BRACKET 
+
+	ADD	shift 8
+	MULTIPLY	shift 7
+	DIVIDE	shift 6
+	MINUS	shift 5
+	RIGHT_BRACKET	shift 15
+
+
+	.	error
+
+
+state 10:
+
+	EXP : EXP . ADD EXP 
+	EXP : EXP . MULTIPLY EXP 
+	EXP : EXP . DIVIDE EXP 
+	EXP : EXP . MINUS EXP 
+	START : PRINT EXP .  (reduce by rule 0)
+
+	ADD	shift 8
+	MULTIPLY	shift 7
+	DIVIDE	shift 6
+	MINUS	shift 5
+
+
+	.	reduce by rule 0
+
+
+state 11:
+
+	EXP : EXP . ADD EXP 
+	EXP : EXP . MULTIPLY EXP 
+	EXP : EXP . DIVIDE EXP 
+	EXP : EXP . MINUS EXP 
+	EXP : EXP MINUS EXP .  (reduce by rule 7)
+
+	MULTIPLY	shift 7
+	DIVIDE	shift 6
+
+
+	.	reduce by rule 7
+
+
+state 12:
+
+	EXP : EXP . ADD EXP 
+	EXP : EXP . MULTIPLY EXP 
+	EXP : EXP . DIVIDE EXP 
+	EXP : EXP DIVIDE EXP .  (reduce by rule 6)
+	EXP : EXP . MINUS EXP 
+
+
+
+	.	reduce by rule 6
+
+
+state 13:
+
+	EXP : EXP . ADD EXP 
+	EXP : EXP . MULTIPLY EXP 
+	EXP : EXP MULTIPLY EXP .  (reduce by rule 5)
+	EXP : EXP . DIVIDE EXP 
+	EXP : EXP . MINUS EXP 
+
+
+
+	.	reduce by rule 5
+
+
+state 14:
+
+	EXP : EXP . ADD EXP 
+	EXP : EXP ADD EXP .  (reduce by rule 4)
+	EXP : EXP . MULTIPLY EXP 
+	EXP : EXP . DIVIDE EXP 
+	EXP : EXP . MINUS EXP 
+
+	MULTIPLY	shift 7
+	DIVIDE	shift 6
+
+
+	.	reduce by rule 4
+
+
+state 15:
+
+	EXP : LEFT_BRACKET EXP RIGHT_BRACKET .  (reduce by rule 8)
+
+
+
+	.	reduce by rule 8
+
+
+state 16:
+
+
+	SEMICOLON	accept
+	EOF	accept
+
+
+	.	error
+
+24 of 51 action table entries left after compaction
+8 goto table entries

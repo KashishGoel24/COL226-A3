@@ -1,0 +1,71 @@
+EBNF OF THE WHILE LANGUAGE
+
+program ::= block .
+block ::= declarationSeq commandSeq .
+declarationSeq ::= [varDecls] [procDecls] .
+varDecls ::= [ratVarDecls] [intVarDecls] [boolVarDecls] .
+ratVarDecls ::= RATIONAL ident {, ident}; .
+intVarDecls ::= INTEGER ident {, ident}; .
+boolVarDecls ::= BOOLEAN ident {, ident}; .
+procDecls ::= [procDef {;procDecls};] .
+procDef ::= PROCEDURE ident block .
+commandSeq ::= {{command;}} .
+command ::= assignmentCmd | callCmd | readCmd | printCmd | conditionalCmd | whileCmd .
+assignmentCmd ::= ident := expression .
+callCmd ::= CALL ident .
+readCmd ::= READ ( ident ) .
+printCmd ::= PRINT ( expression ) .
+expression ::= ratExpression | intExpression | boolExpression .
+conditionalCmd ::= IF boolExpression THEN commandSeq ELSE commandSeq FI .
+whileCmd ::= WHILE boolExpression DO commandSeq OD
+
+
+the context free grammar
+
+program -> block
+block -> declarationSeq commandSeq
+declarationSeq -> varDecls procDecls | varDecls | procDecls | epsilon
+varDecls -> ratVarDecls intVarDecls boolVarDecls | ratVarDecls intVarDecls | ratVarDecls boolVarDecls | intVarDecls boolVarDecls | ratVarDecls | intVarDecls | boolVarDecls
+ratVarDecls -> RATIONAL identSeq ; 
+intVarDecls -> INTEGER identSeq ; 
+boolVarDecls -> BOOLEAN identSeq ; 
+identSeq -> ident | ident , identSeq
+procDecls -> procDef | procDef ; procDecls ;
+procDef -> PROCEDURE ident block 
+commandSeq -> "{" commandList "}" | epsilon
+commandList -> command ; | command ; commandList
+command -> assignmentCmd | callCmd | readCmd | printCmd | conditionalCmd | whileCmd 
+assignmentCmd -> ident := expression 
+callCmd -> CALL ident 
+readCmd -> READ "(" ident ")" 
+printCmd -> PRINT "(" expression ")"
+expression -> ratExpression | intExpression | boolExpression
+conditionalCmd -> IF boolExpression THEN commandSeq ELSE commandSeq FI
+whileCmd -> WHILE boolExpression DO commandSeq OD
+
+ratExpression -> "~" ratExpression | "+" ratExpression | INVERSE ratExpression 
+                  | ratExpression ".+." ratExpression | ratExpression ".-." ratExpression | ratExpression ".*." ratExpression | ratExpression "./." ratExpression
+                  | 
+
+intExpression -> integer | "~" intExpression | "+" intExpression 
+                  | intExpression "+" intExpression | intExpression "-" intExpression | intExpression "*" intExpression | intExpression "/" intExpression | intExpression "%" intExpression
+                  | intExpression relationalOper intExpression
+
+boolExpression -> bool | "!" boolExpression | boolExpression "&&" boolExpression | boolExpression "||" boolExpression
+
+relationalOper -> "=" | "<>" | "<" | ">" | "<=" | ">="
+integer -> digit | digit integer
+nonZeroInteger -> nonZeroDigit integer | nonZeroDigit
+bool -> TT | FF
+rational -> sign integer / nonZeroInteger | ( sign integer , nonZeroInteger )
+decimal -> sign integer . integer ( integer ) | sign . integer ( integer ) | sign integer . ( integer ) | sign . ( integer )
+sign -> + | - | epsilon
+
+ident -> variable
+variable -> letter mix
+mix -> letter | digit | letter mix | digit mix
+letter -> uppercase | lowercase
+uppercase -> "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "x" | "Y" | "Z"
+lowercase -> "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
+digit -> '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+nonZeroDigit -> '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
